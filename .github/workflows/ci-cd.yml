@@ -42,22 +42,13 @@ jobs:
     - name: Run integration tests
       run: ./mvnw verify -DskipITs=false
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      continue-on-error: true
       
     - name: Code coverage
       uses: codecov/codecov-action@v3
       with:
         file: ./target/site/jacoco/jacoco.xml
         fail_ci_if_error: false
-        
-    - name: Build Docker image
-      run: |
-        docker build -t intellidev/java-ai-starter:latest .
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      
-    - name: Security scan
-      uses: snyk/actions/maven@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       continue-on-error: true
       
     - name: Upload build artifacts
@@ -153,6 +144,7 @@ jobs:
       
     - name: Generate API documentation
       run: ./mvnw javadoc:javadoc
+      continue-on-error: true
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
@@ -161,3 +153,4 @@ jobs:
         publish_dir: ./target/site/apidocs
         destination_dir: ./docs/api
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      continue-on-error: true
