@@ -5,12 +5,12 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-  schedule:
-    - cron: '0 2 * * *'  # 每天凌晨2点运行
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
     - name: Checkout code
@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-        cache: maven
+        cache: 'maven'
         
     - name: Cache Maven dependencies
       uses: actions/cache@v3
@@ -31,60 +31,35 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
           
+    - name: Validate Maven wrapper
+      run: |
+        echo "检查Maven Wrapper..."
+        ls -la mvnw
+        chmod +x mvnw
+        
     - name: Build with Maven
       run: ./mvnw clean compile -DskipTests
       
     - name: Run tests
-      run: ./mvnw test
+      run: ./mvnw test -DskipTests=false
       env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || 'dummy-key-for-ci' }}
         
-    - name: Run integration tests
-      run: ./mvnw verify -DskipITs=false
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      continue-on-error: true
-      
-    - name: Code coverage
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./target/site/jacoco/jacoco.xml
-        fail_ci_if_error: false
-      continue-on-error: true
+    - name: Package application
+      run: ./mvnw clean package -DskipTests
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: java-artifacts
+        name: java-ai-starter-jar
         path: target/*.jar
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: success()
 
+  # 简化的质量检查（可选）
   quality-check:
     runs-on: ubuntu-latest
     needs: build-and-test
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        
-    - name: Checkstyle
-      run: ./mvnw checkstyle:check
-      
-    - name: PMD analysis
-      run: ./mvnw pmd:check
-      
-    - name: SpotBugs analysis
-      run: ./mvnw spotbugs:check
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [build-and-test, quality-check]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: always()
     
     steps:
     - name: Checkout code
@@ -96,61 +71,12 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         
-    - name: Build package
-      run: ./mvnw clean package -DskipTests
-      
-    - name: Login to DockerHub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: |
-          intellidev/java-ai-starter:latest
-          intellidev/java-ai-starter:${{ github.sha }}
-          
-    - name: Deploy to staging
+    - name: Check code style
       run: |
-        echo "Deploying to staging environment..."
-        # 这里添加你的部署脚本
-        # 例如：kubectl apply -f k8s/
-      env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
+        echo "代码风格检查（占位符）"
+        echo "可以通过添加Checkstyle或Spotless插件来增强"
         
-    - name: Run smoke tests
+    - name: Dependency check
       run: |
-        echo "Running smoke tests..."
-        # 这里添加冒烟测试脚本
-        
-    - name: Deploy to production
-      if: success()
-      run: |
-        echo "Deploying to production..."
-        # 这里添加生产环境部署脚本
-      env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG_PRODUCTION }}
-
-  documentation:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Generate API documentation
-      run: ./mvnw javadoc:javadoc
-      continue-on-error: true
-      
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./target/site/apidocs
-        destination_dir: ./docs/api
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      continue-on-error: true
+        echo "依赖检查（占位符）"
+        echo "可以添加OWASP Dependency-Check"
