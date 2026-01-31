@@ -52,6 +52,13 @@
             <version>0.18.2</version>
         </dependency>
         
+        <!-- Jakarta Annotations (for @PostConstruct in Spring Boot 3) -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
