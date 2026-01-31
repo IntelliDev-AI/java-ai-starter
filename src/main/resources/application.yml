@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: java-ai-starter
+  main:
+    banner-mode: off
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    com.intellidev: DEBUG
+    org.springframework: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+openai:
+  api-key: ${OPENAI_API_KEY:}
+  model: ${OPENAI_MODEL:gpt-3.5-turbo}
+  timeout: 30000
+  max-tokens: 1000
