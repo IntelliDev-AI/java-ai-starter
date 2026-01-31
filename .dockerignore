@@ -1,0 +1,39 @@
+# 忽略文件
+.git
+.gitignore
+.DS_Store
+.idea
+.vscode
+*.iml
+
+# 忽略日志和临时文件
+logs/
+target/
+*.log
+*.tmp
+*.temp
+
+# 忽略测试文件
+**/test/
+**/*Test.java
+**/*Tests.java
+
+# 忽略文档和配置文件（根据需要调整）
+*.md
+!README.md
+!DOCKER_DEPLOYMENT.md
+.env
+!*.example
+
+# 忽略Maven包装器（如果需要可以包含）
+.mvn/wrapper/maven-wrapper.jar
+
+# 忽略Node.js文件（如果项目有前端）
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 忽略IDE配置文件
+.project
+.classpath
+.settings/
