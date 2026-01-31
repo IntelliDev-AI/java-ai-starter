@@ -1,9 +1,20 @@
 # Java AI Starter
 
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
+<!-- 仓库统计徽章 -->
+[![GitHub stars](https://img.shields.io/github/stars/IntelliDev-AI/java-ai-starter?style=for-the-badge)](https://github.com/IntelliDev-AI/java-ai-starter/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/IntelliDev-AI/java-ai-starter?style=for-the-badge)](https://github.com/IntelliDev-AI/java-ai-starter/network)
+[![GitHub issues](https://img.shields.io/github/issues/IntelliDev-AI/java-ai-starter?style=for-the-badge)](https://github.com/IntelliDev-AI/java-ai-starter/issues)
+[![GitHub license](https://img.shields.io/github/license/IntelliDev-AI/java-ai-starter?style=for-the-badge)](https://github.com/IntelliDev-AI/java-ai-starter/blob/main/LICENSE)
+
+<!-- 技术栈徽章 -->
+[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://java.com)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
+
+<!-- GitHub Actions状态 -->
+[![CI/CD Pipeline](https://github.com/IntelliDev-AI/java-ai-starter/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/IntelliDev-AI/java-ai-starter/actions/workflows/ci-cd.yml)
 
 Spring Boot + OpenAI 快速启动模板，专为Java开发者设计的AI应用基础框架。
 
