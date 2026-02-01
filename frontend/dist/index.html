@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java AI Starter - 聊天界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .chat-container {
+            padding: 30px;
+            height: 500px;
+            overflow-y: auto;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message.bot {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+        }
+        
+        .user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot .message-content {
+            background: #f0f2f5;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .input-container {
+            padding: 20px 30px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .status {
+            padding: 10px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .chat-container {
+                padding: 20px;
+                height: 400px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+        
+        /* 打字指示器 */
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f0f2f5;
+            border-radius: 20px;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+        
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* 流式响应样式 */
+        .streaming-text {
+            display: inline;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #333;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Java AI Starter</h1>
+            <p>基于Spring Boot + DeepSeek的智能聊天系统</p>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="welcome-message">
+                <p>👋 你好！我是DeepSeek AI助手</p>
+                <p>我可以回答各种问题、协助处理文档、进行创作和分析等</p>
+                <p>请在下方的输入框中开始对话吧！</p>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="输入你的消息..." autocomplete="off">
+            <button onclick="sendMessage()">发送</button>
+        </div>
+        
+        <div class="status">
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>系统状态: 在线</span>
+            </div>
+            <div class="status-item">
+                <span>API: http://81.70.234.241:8080</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://81.70.234.241/api/v1';
+        const chatContainer = document.getElementById('chatContainer');
+        const messageInput = document.getElementById('messageInput');
+        
+        // 添加消息到聊天界面
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            
+            // 滚动到底部
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 发送消息（流式响应）
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // 清空输入框
+            messageInput.value = '';
+            
+            // 显示用户消息
+            addMessage(message, true);
+            
+            // 创建AI消息容器（用于流式显示）
+            const aiMessageId = 'ai-' + Date.now();
+            const aiMessageContainer = document.createElement('div');
+            aiMessageContainer.className = 'message bot';
+            aiMessageContainer.id = aiMessageId;
+            
+            const aiContent = document.createElement('div');
+            aiContent.className = 'message-content';
+            aiContent.id = aiMessageId + '-content';
+            aiContent.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+            
+            aiMessageContainer.appendChild(aiContent);
+            chatContainer.appendChild(aiMessageContainer);
+            
+            // 滚动到底部
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            try {
+                // 使用流式端点
+                const response = await fetch(`${API_BASE}/chat/stream`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // 处理流式响应
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let buffer = '';
+                let fullResponse = '';
+                
+                // 移除打字指示器
+                aiContent.innerHTML = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) {
+                        break;
+                    }
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const dataStr = line.substring(6);
+                            
+                            if (dataStr === '[DONE]') {
+                                break;
+                            }
+                            
+                            try {
+                                const eventData = JSON.parse(dataStr);
+                                
+                                if (eventData.chunk) {
+                                    fullResponse += eventData.chunk;
+                                    aiContent.textContent = fullResponse;
+                                    
+                                    // 平滑滚动
+                                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                                } else if (eventData.error) {
+                                    throw new Error(eventData.error);
+                                }
+                            } catch (e) {
+                                console.warn('解析流式数据失败:', e);
+                            }
+                        }
+                    }
+                }
+                
+                // 如果流式响应失败，回退到非流式
+                if (!fullResponse) {
+                    await fallbackToRegularChat(message, aiContent);
+                }
+                
+            } catch (error) {
+                console.error('流式聊天失败:', error);
+                aiContent.innerHTML = `<span style="color: #dc3545;">❌ 流式响应失败: ${error.message}</span>`;
+                
+                // 尝试回退到非流式
+                await fallbackToRegularChat(message, aiContent);
+            }
+        }
+        
+        // 回退到非流式聊天
+        async function fallbackToRegularChat(message, aiContent) {
+            try {
+                aiContent.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+                
+                const response = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                
+                try {
+                    const data = JSON.parse(text);
+                    if (data.response) {
+                        aiContent.textContent = data.response;
+                    } else if (data.message) {
+                        aiContent.textContent = data.message;
+                    } else {
+                        aiContent.textContent = text;
+                    }
+                } catch (jsonError) {
+                    aiContent.textContent = text;
+                }
+            } catch (fallbackError) {
+                console.error('回退聊天失败:', fallbackError);
+                aiContent.innerHTML = `<span style="color: #dc3545;">❌ 聊天失败: ${fallbackError.message}</span>`;
+            }
+        }
+        
+        // 按Enter发送消息
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // 页面加载时测试连接
+        window.onload = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/ping`);
+                const text = await response.text();
+                console.log('连接测试成功:', text);
+            } catch (error) {
+                console.error('连接测试失败:', error);
+                addMessage('⚠️ 警告: 无法连接到后端服务器，请检查网络连接。');
+            }
+        };
+    </script>
+</body>
+</html>
