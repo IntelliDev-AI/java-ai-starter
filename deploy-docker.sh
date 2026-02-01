@@ -29,7 +29,7 @@ check_env() {
         echo "创建默认环境文件..."
         cat > .env.docker << EOF
 # Docker环境配置
-AI_API_KEY=sk-1899062c03f640f090129c4692ccc26f
+AI_API_KEY=your_deepseek_api_key_here
 AI_BASE_URL=https://api.deepseek.com
 AI_MODEL=deepseek-chat
 AI_MAX_TOKENS=1000

@@ -64,7 +64,7 @@ docker rm java-ai-starter
 cd java-ai-starter/docker-build
 docker build -t java-ai-starter:latest .
 docker run -d --name java-ai-starter -p 8080:8080 \
-  -e AI_API_KEY=sk-1899062c03f640f090129c4692ccc26f \
+  -e AI_API_KEY=your_deepseek_api_key_here \
   java-ai-starter:latest
 ```
 
