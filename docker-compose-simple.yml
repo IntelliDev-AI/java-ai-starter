@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  java-ai-app:
+    build: .
+    container_name: java-ai-starter
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - AI_API_KEY=${AI_API_KEY:-sk-1899062c03f640f090129c4692ccc26f}
+      - AI_MODEL=deepseek-chat
+      - AI_BASE_URL=https://api.deepseek.com
+      - AI_TIMEOUT=30000
+      - AI_MAX_TOKENS=1000
+      - SERVER_PORT=8080
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
