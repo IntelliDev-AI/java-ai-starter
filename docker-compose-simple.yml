@@ -8,7 +8,7 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - AI_API_KEY=${AI_API_KEY:-your_deepseek_api_key_here}
+      - AI_API_KEY=${AI_API_KEY:-sk-c0083c496e2145b88ea083d6f527af2b}
       - AI_MODEL=deepseek-chat
       - AI_BASE_URL=https://api.deepseek.com
       - AI_TIMEOUT=30000
