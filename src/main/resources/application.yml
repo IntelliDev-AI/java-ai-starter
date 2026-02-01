@@ -1,23 +1,35 @@
+# Spring Boot 配置
 spring:
   application:
     name: java-ai-starter
-  main:
-    banner-mode: off
+  profiles:
+    active: dev
 
 server:
   port: 8080
   servlet:
     context-path: /
 
+# AI 配置
+ai:
+  api:
+    key: ${AI_API_KEY:sk-1899062c03f640f090129c4692ccc26f}
+  base:
+    url: ${AI_BASE_URL:https://api.deepseek.com}
+  model: ${AI_MODEL:deepseek-chat}
+  max:
+    tokens: ${AI_MAX_TOKENS:1000}
+  timeout: ${AI_TIMEOUT:30000}
+
+# 日志配置
 logging:
   level:
-    com.intellidev: DEBUG
-    org.springframework: INFO
+    root: INFO
+    com.intellidev.ai: DEBUG
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-openai:
-  api-key: ${OPENAI_API_KEY:}
-  model: ${OPENAI_MODEL:gpt-3.5-turbo}
-  timeout: 30000
-  max-tokens: 1000
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 10

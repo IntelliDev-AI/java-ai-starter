@@ -27,7 +27,7 @@ export JAVA_OPTS="$JAVA_OPTS -Dmanagement.endpoint.health.show-details=always"
 export JAVA_OPTS="$JAVA_OPTS -Dlogging.file.name=/app/logs/application.log"
 export JAVA_OPTS="$JAVA_OPTS -Dlogging.file.max-size=10MB"
 export JAVA_OPTS="$JAVA_OPTS -Dlogging.file.max-history=10"
-export JAVA_OPTS="$JAVA_OPTS -Dlogging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+export JAVA_OPTS="$JAVA_OPTS -Dlogging.pattern.console='%d{yyyy-MM-dd HH:mm:ss} - %msg%n'"
 
 # 应用配置
 export JAVA_OPTS="$JAVA_OPTS -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-docker}"

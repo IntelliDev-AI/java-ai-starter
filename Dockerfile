@@ -21,7 +21,7 @@ COPY src src
 RUN mvn clean package -DskipTests
 
 # 第二阶段：运行阶段
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre
 
 # 设置时区
 ENV TZ=Asia/Shanghai
